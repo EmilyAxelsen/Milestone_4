@@ -7,11 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
 ```
 
-```{r reading in firearm background check data}
+```{r reading in firearm background check data, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
-background_checks <- read_csv("nics-firearm-background-checks.csv", col_types = cols(
+background_checks <- read_csv("nics-firearm-background-checks copy.csv", col_types = cols(
   month = col_character(),
   state = col_character(),
   permit = col_double(),
@@ -42,13 +44,37 @@ background_checks <- read_csv("nics-firearm-background-checks.csv", col_types = 
 ))
 ```
 
-```{r}
+```{r }
 month_comparison <- background_checks %>%
   filter(state == "Pennsylvania") %>%
-  filter(month %in% c("2019-06", "2019-07", "2019-08", "2018-12", "2019-01", "2019-02")) 
+  filter(month %in% c("2019-05", "2019-06", "2019-07", "2019-08", "2018-12", "2019-01", "2019-02", "2019-03")) 
   
   
-ggplot(month_comparison, aes(x = month, y = permit, group = 1))+
-  geom_line()
+ggplot(month_comparison, aes(x = month, y = permit, group = 1, color = factor(month))) +
+  geom_line() +
+  theme(legend.position = 'none') +
+  labs(x = "Month", 
+         y = "Number of Permits Granted",
+         title = "Does the Number of Permits Granted Correlate to Hot or Cold Months?",
+         subtitle = "The Number of Permits Granted in Pennsylvania in June, July, and August Compared to December, January, and February")
+
+```
+
+```{r}
+bar_month_comparison <- background_checks %>%
+  select(permit, month, state) %>%
+  filter(month == "2018-12") %>%
+  arrange(desc(permit)) %>%
+  slice(1:10)
+
+ggplot(bar_month_comparison, aes(x = state, y = permit)) +
+  geom_col(show.legend = FALSE) +
+   labs(x = "State", 
+       y = "Number of Permits Granted",
+       title = "The Number of Gun Permits Granted Per State",
+       subtitle = "The 10 States With That Granted The Highest Number of Permits",
+       caption = "Source: The National Instant Criminal Background Check System (provided by the Federal Bureau of Investigation")
+  
+  
 ```
 
