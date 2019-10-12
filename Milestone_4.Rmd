@@ -44,7 +44,31 @@ background_checks <- read_csv("nics-firearm-background-checks copy.csv", col_typ
 ))
 ```
 
-```{r }
+
+```{r making bar plot}
+bar_month_comparison <- background_checks %>%
+  select(permit, month, state) %>%
+  filter(month == "2018-12") %>%
+  arrange(desc(permit)) %>%
+  slice(1:10)
+
+ggplot(bar_month_comparison, aes(x = reorder(state, permit), y = permit, fill = state)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip() +
+  labs(x = "State", 
+       y = "Number of Permits Granted",
+       title = "The Number of Gun Permits Granted Per State",
+       subtitle = "The 10 States With That Granted The Highest Number of Permits",
+       caption = "Source: The National Instant Criminal Background Check System")
+  
+# To create a bar plot, I first assigned my background check data to bar_month_comparison and selected for permit number, month, and state as those are the variables I am interested in working with. Then, I filtered to only get information from December, 2018 by setting month equal to "2018-12." When researching information about gun violence, I came across a New York Times Article called "A Rise In Murder? Let's Talk About The Weather" which correlates hot weather to increased gun violence. I therefore chose to focus on December, 2018 specifically in order to potentially compare this graph to a graph that shows the number of permits issued in a summer month. Next, I arranged by descending in order to get the states that issues the most permits first. I used the slice function to only get the ten states that issues the highest number of permits in December, 2018.
+# In order to make my bar plot, I assigned state as the x axis and permit as the y axis before flipping the coordinates using the function coord_flip(). I flipped the coordinates so that the reader can read the state names easier. I also used the labs function in order to add labels to my x and y axis, a title, subtitle, and caption. 
+# I also tried to change x axis labels from scientific notation by assigning format(scientific = FALSE) to point then adding the scale_x_continuous function to ggplot with labels equal to point within the scale_x_continuous function. However, this method did not work.
+# Link to New York Times Article mentioned in my comments: https://www.nytimes.com/2018/09/21/upshot/a-rise-in-murder-lets-talk-about-the-weather.html
+
+```
+
+```{r making line plot}
 month_comparison <- background_checks %>%
   filter(state == "Pennsylvania") %>%
   filter(month %in% c("2019-05", "2019-06", "2019-07", "2019-08", "2018-12", "2019-01", "2019-02", "2019-03")) 
@@ -54,27 +78,14 @@ ggplot(month_comparison, aes(x = month, y = permit, group = 1, color = factor(mo
   geom_line() +
   theme(legend.position = 'none') +
   labs(x = "Month", 
-         y = "Number of Permits Granted",
-         title = "Does the Number of Permits Granted Correlate to Hot or Cold Months?",
-         subtitle = "The Number of Permits Granted in Pennsylvania in June, July, and August Compared to December, January, and February")
-
-```
-
-```{r}
-bar_month_comparison <- background_checks %>%
-  select(permit, month, state) %>%
-  filter(month == "2018-12") %>%
-  arrange(desc(permit)) %>%
-  slice(1:10)
-
-ggplot(bar_month_comparison, aes(x = state, y = permit)) +
-  geom_col(show.legend = FALSE) +
-   labs(x = "State", 
        y = "Number of Permits Granted",
-       title = "The Number of Gun Permits Granted Per State",
-       subtitle = "The 10 States With That Granted The Highest Number of Permits",
-       caption = "Source: The National Instant Criminal Background Check System (provided by the Federal Bureau of Investigation")
-  
-  
+       title = "Does the Number of Permits Granted Correlate to Hot or Cold Months?",
+       subtitle = "The Number of PA Permits Granted in Summer Versus Winter Months",
+       caption = "Source: The National Instant Criminal Background Check System")
+
+# In order to create a line plot, I first filitered for only information about Pennslyvania. I also chose to select the summer months of May, June, July, and August as well as the winter months of December, January, February, and March in order to get a better idea of whether or not hot weather correlates to increased gun violence. The number of permits issued in a state often correlates to the number of guns sold in a certain state which can be an important indicator of gun violence. 
+# To create my line plot, I assiged month to my x axis and permit number to my y axis. By setting color equal to factor(month) I was able to create different colors for the different months on my line plot. I also removed the legend using theme(legend.position = 'none') and used the labs function to add a title, subtitle, and titles for my x and y axes. 
+
 ```
+
 
